@@ -12,7 +12,7 @@ export default function ShowSchoolsPage() {
     }, []);
 
     return (
-        <div className="p-6" style={{ "margin-top": '3rem' }}>
+        <div className="p-6" style={{ "marginTop": '3rem' }}>
             <h1 className="text-3xl font-bold mb-6 text-center">Schools</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {schools.length > 0 ? (schools.map((school) => (

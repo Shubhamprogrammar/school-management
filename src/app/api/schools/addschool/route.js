@@ -1,7 +1,12 @@
 import { db } from "@/lib/db";
-import { writeFile } from "fs/promises";
-import fs from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req) {
   try {
@@ -24,25 +29,38 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: "Email ID already exists" }), { status: 400 });
     }
 
-    const dir = path.join(process.cwd(), "public", "schoolImages");
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    // Convert file to buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    // Save image
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = `${Date.now()}-${file.name}`;
-    const filepath = path.join(dir, filename);
-    await writeFile(filepath, buffer);
+    // Upload buffer to Cloudinary
+    const uploadedImage = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "schools" }, 
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      uploadStream.end(buffer);
+    });
 
-    // Store record in MySQL
+    // Store record in MySQL (store Cloudinary secure_url)
     const [result] = await db.query(
-      "INSERT INTO schools (name, address, city, state, contact, image, email_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?,?)",
-      [name, address, city, state, contact, `/schoolImages/${filename}`, email_id, new Date()]
+      "INSERT INTO schools (name, address, city, state, contact, image, email_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [name, address, city, state, contact, uploadedImage.secure_url, email_id, new Date()]
     );
 
-    return new Response(JSON.stringify({ success: true, id: result.insertId }), { status: 201 });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        id: result.insertId,
+        imageUrl: uploadedImage.secure_url,
+      }),
+      { status: 201 }
+    );
   } catch (err) {
+    console.error(err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 }

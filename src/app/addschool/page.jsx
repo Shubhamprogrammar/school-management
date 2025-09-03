@@ -46,7 +46,7 @@ export default function AddSchoolPage() {
 
   return (
     <div className="flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 " style={{"margin-top": '5rem'}}>
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 " style={{"marginTop": '5rem'}}>
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Add New School
         </h1>
