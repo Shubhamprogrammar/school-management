@@ -36,7 +36,7 @@ export async function POST(req) {
     // Upload buffer to Cloudinary
     const uploadedImage = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "schools" }, 
+        { folder: "schoolImages" }, 
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -55,7 +55,6 @@ export async function POST(req) {
       JSON.stringify({
         success: true,
         id: result.insertId,
-        imageUrl: uploadedImage.secure_url,
       }),
       { status: 201 }
     );

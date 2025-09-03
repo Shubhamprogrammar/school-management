@@ -4,15 +4,17 @@ import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 
 export default function AddSchoolPage() {
-  const { control, handleSubmit, reset, formState: { errors } } = useForm({defaultValues: {
-    name: "",
-    email_id: "",
-    contact: "",
-    address: "",
-    city: "",
-    state: "",
-    image: null
-  }});
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      name: "",
+      email_id: "",
+      contact: "",
+      address: "",
+      city: "",
+      state: "",
+      image: null
+    }
+  });
   const [message, setMessage] = useState("");
   const [fileName, setFileName] = useState("");
 
@@ -46,7 +48,7 @@ export default function AddSchoolPage() {
 
   return (
     <div className="flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 " style={{"marginTop": '5rem'}}>
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 " style={{ "marginTop": '5rem' }}>
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Add New School
         </h1>
@@ -57,7 +59,14 @@ export default function AddSchoolPage() {
             <Controller
               name="name"
               control={control}
-              rules={{ required: "Name is required" }}
+              rules={{
+                required: "Name is required",
+                minLength: { value: 3, message: "Name must be at least 3 characters" },
+                pattern: {
+                  value: /^[A-Za-z\s]+$/,
+                  message: "Name can only contain letters and spaces",
+                },
+              }}
               render={({ field }) => (
                 <input
                   {...field}
@@ -77,7 +86,13 @@ export default function AddSchoolPage() {
             <Controller
               name="email_id"
               control={control}
-              rules={{ required: "Email is required" }}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Enter a valid email address",
+                },
+              }}
               render={({ field }) => (
                 <input
                   type="email"
@@ -98,7 +113,13 @@ export default function AddSchoolPage() {
             <Controller
               name="contact"
               control={control}
-              rules={{ required: "Contact is required" }}
+              rules={{
+                required: "Contact is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Contact must be a 10-digit number",
+                },
+              }}
               render={({ field }) => (
                 <input
                   type="text"
@@ -119,7 +140,9 @@ export default function AddSchoolPage() {
             <Controller
               name="address"
               control={control}
-              rules={{ required: "Address is required" }}
+              rules={{
+                required: "Address is required",
+              }}
               render={({ field }) => (
                 <input
                   {...field}
@@ -140,7 +163,13 @@ export default function AddSchoolPage() {
               <Controller
                 name="city"
                 control={control}
-                rules={{ required: "City is required" }}
+                rules={{
+                  required: "City is required",
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: "City can only contain letters",
+                  },
+                }}
                 render={({ field }) => (
                   <input
                     {...field}
@@ -159,7 +188,13 @@ export default function AddSchoolPage() {
               <Controller
                 name="state"
                 control={control}
-                rules={{ required: "State is required" }}
+                rules={{
+                  required: "State is required",
+                  pattern: {
+                    value: /^[A-Za-z\s]+$/,
+                    message: "State can only contain letters",
+                  },
+                }}
                 render={({ field }) => (
                   <input
                     {...field}
@@ -214,9 +249,8 @@ export default function AddSchoolPage() {
 
         {message && (
           <p
-            className={`mt-4 text-center font-medium ${
-              message.includes("success") ? "text-green-600" : "text-red-600"
-            }`}
+            className={`mt-4 text-center font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"
+              }`}
           >
             {message}
           </p>
