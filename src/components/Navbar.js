@@ -20,7 +20,7 @@ export default function Navbar() {
           </div>
 
           {/* Right Button */}
-          <div className="hidden md:flex">
+          <div className="md:flex">
             <Link
               href={target}
               className="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-gray-100 transition"
