@@ -45,8 +45,8 @@ export default function AddSchoolPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8">
+    <div className="flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 " style={{"margin-top": '5rem'}}>
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Add New School
         </h1>
@@ -101,7 +101,7 @@ export default function AddSchoolPage() {
               rules={{ required: "Contact is required" }}
               render={({ field }) => (
                 <input
-                  type="number"
+                  type="text"
                   {...field}
                   value={field.value || ""}
                   placeholder="Contact Number"

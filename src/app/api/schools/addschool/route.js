@@ -37,8 +37,8 @@ export async function POST(req) {
 
     // Store record in MySQL
     const [result] = await db.query(
-      "INSERT INTO schools (name, address, city, state, contact, image, email_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [name, address, city, state, contact, `/schoolImages/${filename}`, email_id]
+      "INSERT INTO schools (name, address, city, state, contact, image, email_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?,?)",
+      [name, address, city, state, contact, `/schoolImages/${filename}`, email_id, new Date()]
     );
 
     return new Response(JSON.stringify({ success: true, id: result.insertId }), { status: 201 });
