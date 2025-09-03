@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
     const pathname = usePathname();
     const target = pathname === "/addschool" ? "/showschools" : "/addschool";
-  const label = pathname === "/addschool" ? "Show Schools" : "+ Add School";
+  const label = pathname === "/addschool" ? "View Schools" : "+ Add School";
   return (
     <nav className="bg-blue-600 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
