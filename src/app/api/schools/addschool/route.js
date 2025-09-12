@@ -36,11 +36,14 @@ export async function POST(req) {
     if (!file) {
       return new Response(JSON.stringify({ error: "No file uploaded" }), { status: 400 });
     }
+    if (!name || !address || !city || !state || !contact || !email_id) {
+      return new Response(JSON.stringify({ error: "All fields are required" }), { status: 400 });
+    }
 
-    // Check if email exists
-    const [rows] = await db.query("SELECT id FROM users WHERE email = ?", [email_id]);
-    if (rows.length === 0) {
-      return new Response(JSON.stringify({ error: "You must be a registered user to add a school." }), { status: 403 });
+    // Check if email already exists
+    const [existing] = await db.query("SELECT id FROM schools WHERE email_id = ?", [email_id]);
+    if (existing.length > 0) {
+      return new Response(JSON.stringify({ error: "Email ID already exists" }), { status: 400 });
     }
 
     // Convert file to buffer
