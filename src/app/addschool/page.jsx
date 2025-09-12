@@ -2,6 +2,7 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AddSchoolPage() {
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
@@ -15,12 +16,12 @@ export default function AddSchoolPage() {
       image: null
     }
   });
-  const [message, setMessage] = useState("");
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
     const formData = new FormData();
-
+    setLoading(true);
     Object.keys(data).forEach((key) => {
       if (key !== "image") {
         formData.append(key, data[key]);
@@ -38,11 +39,13 @@ export default function AddSchoolPage() {
     const responsedata = await res.json();
 
     if (res.ok) {
-      setMessage("School added successfully!");
+      toast.success("School added successfully!");
+      setLoading(false);
       reset();
       setFileName("");
     } else {
-      setMessage(responsedata.error || "Failed to add school.");
+      setLoading(false);
+      toast.error(responsedata.error || "Failed to add school.");
     }
   };
 
@@ -241,20 +244,12 @@ export default function AddSchoolPage() {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300 shadow-md cursor-pointer"
           >
-            Submit
+            {loading ? "Submitting" : "Submit"}
           </button>
         </form>
-
-        {message && (
-          <p
-            className={`mt-4 text-center font-medium ${message.includes("success") ? "text-green-600" : "text-red-600"
-              }`}
-          >
-            {message}
-          </p>
-        )}
       </div>
     </div>
   );

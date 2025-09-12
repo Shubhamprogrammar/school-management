@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 import { v2 as cloudinary } from "cloudinary";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,6 +12,18 @@ cloudinary.config({
 
 export async function POST(req) {
   try {
+    // Verify JWT from cookies
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    if (!token) {
+      return new Response(JSON.stringify({ error: "Unauthorized!! please login again." }), { status: 401 });
+    }
+
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return new Response(JSON.stringify({ error: "Invalid or expired token" }), { status: 403 });
+    }
     const formData = await req.formData();
     const name = formData.get("name");
     const address = formData.get("address");
@@ -23,10 +37,10 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: "No file uploaded" }), { status: 400 });
     }
 
-    // Check if email already exists
-    const [existing] = await db.query("SELECT id FROM schools WHERE email_id = ?", [email_id]);
-    if (existing.length > 0) {
-      return new Response(JSON.stringify({ error: "Email ID already exists" }), { status: 400 });
+    // Check if email exists
+    const [rows] = await db.query("SELECT id FROM users WHERE email = ?", [email_id]);
+    if (rows.length === 0) {
+      return new Response(JSON.stringify({ error: "You must be a registered user to add a school." }), { status: 403 });
     }
 
     // Convert file to buffer
