@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import sgMail from "@sendgrid/mail";
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+console.log("API Key exists:", !!process.env.SENDGRID_API_KEY);
 
 export async function POST(req) {
   try {
@@ -33,6 +34,7 @@ export async function POST(req) {
     ]);
 
     // send email
+    console.log("name",process.env.SENDGRID_VERIFIED_SENDER)
     await sgMail.send({
         to: email,
         from: process.env.SENDGRID_VERIFIED_SENDER,
@@ -69,6 +71,7 @@ The Reno Platforms Team
 
     return NextResponse.json({ success: true });
     } catch (err) {
+      console.log("error",err);
     return NextResponse.json({ success: false, message: "Failed to send OTP" }, { status: 500 });
   }
 }
