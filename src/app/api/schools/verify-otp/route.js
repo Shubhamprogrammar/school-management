@@ -1,4 +1,3 @@
-// app/api/verify-otp/route.ts
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";

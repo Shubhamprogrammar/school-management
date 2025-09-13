@@ -5,15 +5,32 @@ import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, otp } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !otp) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
+     // Check OTP validity
+    const [rows] = await db.query(
+      "SELECT * FROM otp_codes WHERE email = ? AND code = ? ORDER BY id DESC LIMIT 1",
+      [email, otp]
+    );
+    const record = (rows)[0];
+
+    if (!record || new Date(record.expires_at) < new Date()) {
+      return NextResponse.json(
+        { error: "Invalid or expired OTP" },
+        { status: 401 }
+      );
+    }
+
+    // Delete OTP after use
+    await db.query("DELETE FROM otp_codes WHERE id = ?", [record.id]);
+    
     // check if user already exists
-    const [rows] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
-    if ((rows).length > 0) {
+    const [rows_email] = await db.query("SELECT id FROM users WHERE email = ?", [email]);
+    if ((rows_email).length > 0) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
