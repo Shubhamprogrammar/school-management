@@ -245,7 +245,9 @@ export default function AddSchoolPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300 shadow-md cursor-pointer"
+            className={`w-full py-3 rounded-lg font-semibold transition duration-300 shadow-md ${loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"}`}
           >
             {loading ? "Submitting..." : "Submit"}
           </button>

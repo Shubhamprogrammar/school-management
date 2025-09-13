@@ -98,7 +98,9 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
+                                className={`w-full py-2 px-4 font-semibold rounded-lg shadow-md transition ${loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"}`}
                             >
                                 {loading ? "Sending..." : "Send OTP"}
                             </button>
