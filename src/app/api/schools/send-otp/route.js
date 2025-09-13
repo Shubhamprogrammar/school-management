@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import sgMail from "@sendgrid/mail";
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-console.log("API Key exists:", !!process.env.SENDGRID_API_KEY);
 
 export async function POST(req) {
   try {
@@ -34,7 +33,6 @@ export async function POST(req) {
     ]);
 
     // send email
-    console.log("name",process.env.SENDGRID_VERIFIED_SENDER)
     await sgMail.send({
         to: email,
         from: process.env.SENDGRID_VERIFIED_SENDER,
@@ -43,12 +41,12 @@ export async function POST(req) {
 Hello,
 
 We received a request to log in to your account.  
-Use the following One-Time Password (OTP) to complete your login:
+To authenticate, please use the following One Time Password (OTP):
 
 ${otp}
 
 This code will expire in 10 minutes.  
-If you did not request this, please ignore this email.
+Do not share this OTP with anyone. If you didn't make this request, you can safely ignore this email.
 
 Thank you,  
 The Reno Platforms Team
@@ -57,12 +55,12 @@ The Reno Platforms Team
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
     <h2 style="color: #4F46E5;">Your One-Time Password (OTP)</h2>
     <p>Hello,</p>
-    <p>We received a request to log in to your account. Use the following One-Time Password (OTP) to complete your login:</p>
+    <p>We received a request to log in to your account. To authenticate, please use the following One Time Password (OTP):</p>
     <p style="font-size: 20px; font-weight: bold; color: #111; background: #f3f4f6; padding: 10px 15px; border-radius: 6px; display: inline-block;">
       ${otp}
     </p>
     <p>This code will expire in <strong>10 minutes</strong>.</p>
-    <p>If you did not request this, please ignore this email.</p>
+    <p>Do not share this OTP with anyone. If you didn't make this request, you can safely ignore this email.</p>
     <br/>
     <p>Thank you,<br/>The <strong>Reno Platforms</strong> Team</p>
   </div>
@@ -71,7 +69,6 @@ The Reno Platforms Team
 
     return NextResponse.json({ success: true });
     } catch (err) {
-      console.log("error",err);
     return NextResponse.json({ success: false, message: "Failed to send OTP" }, { status: 500 });
   }
 }

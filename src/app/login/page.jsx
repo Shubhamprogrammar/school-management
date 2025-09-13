@@ -2,16 +2,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [otpSent, setOtpSent] = useState(false);
     const [otp, setOtp] = useState("");
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
     const sendOtp = async (e) => {
         e.preventDefault();
         setOtp("");
+        setLoading(true);
+        if (!email) {
+            toast.error("Please enter your email");
+        }
         const res = await fetch("/api/schools/send-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -19,11 +25,13 @@ export default function Login() {
         });
         if (!res.ok) {
             const data = await res.json();
+            setLoading(false);
             toast.error(data.message || "Failed to send OTP");
             return;
         }
         else {
-            toast.success("OTP sent successfully on mail");
+            toast.success("OTP sent successfully on mail. It may land in spam.");
+            setLoading(false);
             setOtpSent(true);
         }
 
@@ -65,16 +73,17 @@ export default function Login() {
                             </div>
                             <button
                                 type="submit"
+                                disabled={loading}
                                 className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
                             >
-                                Send OTP
+                                {loading?"Sending":"Send OTP"}
                             </button>
                         </form>
                         <p className="mt-4 text-center text-sm text-gray-600">
                             Don’t have an account?{" "}
-                            <a href="/signup" className="text-blue-600 hover:underline">
+                            <Link to="/signup" className="text-blue-600 hover:underline">
                                 Sign up here
-                            </a>
+                            </Link>
                         </p>
                     </>
                 ) : (
