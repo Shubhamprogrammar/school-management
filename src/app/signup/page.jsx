@@ -123,7 +123,7 @@ export default function SignupPage() {
                         disabled={loading}
                         className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
                     >
-                        {loading ? "Submitting" : "Sign Up"}
+                        {loading ? "Signing Up..." : "Sign Up"}
                     </button>
                 </form>
                 <p className="mt-4 text-center text-sm text-gray-600">

@@ -19,11 +19,14 @@ export async function POST(req) {
       return new Response(JSON.stringify({ error: "Unauthorized!! please login again." }), { status: 401 });
     }
 
+    let decoded;
     try {
-      jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
       return new Response(JSON.stringify({ error: "Invalid or expired token" }), { status: 403 });
     }
+
+    const user_email = decoded.email;
     const formData = await req.formData();
     const name = formData.get("name");
     const address = formData.get("address");
@@ -53,7 +56,7 @@ export async function POST(req) {
     // Upload buffer to Cloudinary
     const uploadedImage = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "schoolImages" }, 
+        { folder: "schoolImages" },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -64,8 +67,8 @@ export async function POST(req) {
 
     // Store record in MySQL (store Cloudinary secure_url)
     const [result] = await db.query(
-      "INSERT INTO schools (name, address, city, state, contact, image, email_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [name, address, city, state, contact, uploadedImage.secure_url, email_id, new Date()]
+      "INSERT INTO schools (name, address, city, state, contact, image, email_id, user_email, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)",
+      [name, address, city, state, contact, uploadedImage.secure_url, email_id, user_email, new Date()]
     );
 
     return new Response(

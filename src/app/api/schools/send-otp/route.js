@@ -1,9 +1,12 @@
 // app/api/send-otp/route.ts
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export async function POST(req) {
+  try {
     const { email } = await req.json();
 
     if (!email) {
@@ -30,19 +33,9 @@ export async function POST(req) {
     ]);
 
     // send email
-    const transport = nodemailer.createTransport({
-        host: process.env.EMAIL_SERVER_HOST,
-        port: Number(process.env.EMAIL_SERVER_PORT),
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_SERVER_USER,
-            pass: process.env.EMAIL_SERVER_PASS,
-        },
-    });
-
-    await transport.sendMail({
+    await sgMail.send({
         to: email,
-        from: process.env.EMAIL_FROM,
+        from: process.env.SENDGRID_VERIFIED_SENDER,
         subject: "Your One-Time Password (OTP) for Secure Login",
         text: `
 Hello,
@@ -75,4 +68,7 @@ The Reno Platforms Team
     });
 
     return NextResponse.json({ success: true });
+    } catch (err) {
+    return NextResponse.json({ success: false, message: "Failed to send OTP" }, { status: 500 });
+  }
 }

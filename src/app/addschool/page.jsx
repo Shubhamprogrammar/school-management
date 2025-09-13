@@ -247,7 +247,7 @@ export default function AddSchoolPage() {
             disabled={loading}
             className="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300 shadow-md cursor-pointer"
           >
-            {loading ? "Submitting" : "Submit"}
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

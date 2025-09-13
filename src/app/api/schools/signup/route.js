@@ -34,18 +34,16 @@ export async function POST(req) {
 
     // Create JWT
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    console.log(token);
 
     // Response with cookie
     const res = NextResponse.json({ success: true });
-    console.log("Response before setting cookie:", res);
     res.cookies.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
+      sameSite: "strict",
       maxAge: 60 * 60, // 1 hour
     });
-    console.log("Response after setting cookie:", res);
     return res;
   } catch (error) {
     console.error(error);
