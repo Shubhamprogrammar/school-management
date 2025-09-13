@@ -46,7 +46,7 @@ export default function Navbar() {
                 href="/signup"
                 className="px-4 py-2 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-gray-100 transition cursor-pointer"
               >
-                Signup/Login
+                Get Started
               </Link>
             ) : (
               <button
