@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -10,6 +10,25 @@ export default function Login() {
     const [otp, setOtp] = useState("");
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(0); // in seconds
+
+    // Countdown effect
+    useEffect(() => {
+        let timer;
+        if (timeLeft > 0) {
+            timer = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [timeLeft]);
+
+    // Format time mm:ss
+    const formatTime = (seconds) => {
+        const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+        const s = String(seconds % 60).padStart(2, "0");
+        return `${m}:${s}`;
+    };
 
     const sendOtp = async (e) => {
         e.preventDefault();
@@ -17,6 +36,8 @@ export default function Login() {
         setLoading(true);
         if (!email) {
             toast.error("Please enter your email");
+            setLoading(false);
+            return;
         }
         const res = await fetch("/api/schools/send-otp", {
             method: "POST",
@@ -28,13 +49,12 @@ export default function Login() {
             setLoading(false);
             toast.error(data.message || "Failed to send OTP");
             return;
-        }
-        else {
+        } else {
             toast.success("OTP sent successfully on mail. It may land in spam.");
             setLoading(false);
             setOtpSent(true);
+            setTimeLeft(600); // 10 minutes countdown
         }
-
     };
 
     const verifyOtp = async (e) => {
@@ -44,8 +64,12 @@ export default function Login() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp }),
         });
-        if (res.ok) { router.push("/"); }
-        else { toast.error(res.error || "Invalid OTP!"); }
+        if (res.ok) {
+            router.push("/");
+        } else {
+            const data = await res.json();
+            toast.error(data.message || "Invalid OTP!");
+        }
     };
 
     return (
@@ -76,7 +100,7 @@ export default function Login() {
                                 disabled={loading}
                                 className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition cursor-pointer"
                             >
-                                {loading?"Sending...":"Send OTP"}
+                                {loading ? "Sending..." : "Send OTP"}
                             </button>
                         </form>
                         <p className="mt-4 text-center text-sm text-gray-600">
@@ -101,6 +125,14 @@ export default function Login() {
                                 required
                             />
                         </div>
+
+                        {/* Countdown */}
+                        {timeLeft > 0 && (
+                            <p className="text-sm text-red-600 text-end" style={{marginTop: "-10px", marginBottom: "10px"}}>
+                                OTP expires in <span className="font-semibold">{formatTime(timeLeft)}</span>
+                            </p>
+                        )}
+
                         <div className="flex flex-row gap-2">
                             <button
                                 type="submit"
@@ -109,17 +141,21 @@ export default function Login() {
                                 Verify OTP
                             </button>
 
-                            {/* Resend OTP */}
+                            {/* Resend OTP disabled until timer ends */}
                             <button
                                 type="button"
                                 onClick={sendOtp}
-                                className="w-full py-2 px-4 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition cursor-pointer"
+                                disabled={timeLeft > 0}
+                                className={`w-full py-2 px-4 font-semibold rounded-lg shadow-md transition ${
+                                    timeLeft > 0
+                                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
+                                }`}
                             >
                                 Resend OTP
                             </button>
                         </div>
                     </form>
-
                 )}
             </div>
         </div>
