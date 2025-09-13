@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 export async function middleware(req) {
-console.log("✅ Middleware called for:", req.nextUrl.pathname);
-  const token = req.cookies.get("token")?.value;
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   if (!token) {
     console.log("❌ No token found, redirecting...");
