@@ -50,7 +50,7 @@ export default function Login() {
             toast.error(data.message || "Failed to send OTP");
             return;
         } else {
-            toast.success("OTP sent successfully on mail. It may land in spam.");
+            toast.success("OTP sent successfully on mail. Check spam if not found!");
             setLoading(false);
             setOtpSent(true);
             setTimeLeft(600); // 10 minutes countdown
