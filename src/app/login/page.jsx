@@ -66,6 +66,7 @@ export default function Login() {
         });
         if (res.ok) {
             router.push("/");
+            window.location.reload();
         } else {
             const data = await res.json();
             toast.error(data.message || "Invalid OTP!");
