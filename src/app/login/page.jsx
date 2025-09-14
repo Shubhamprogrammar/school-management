@@ -65,8 +65,7 @@ export default function Login() {
             body: JSON.stringify({ email, otp }),
         });
         if (res.ok) {
-            router.push("/");
-            window.location.reload();
+            window.location.href = "/";
         } else {
             const data = await res.json();
             toast.error(data.message || "Invalid OTP!");

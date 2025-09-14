@@ -99,8 +99,7 @@ export default function SignupPage() {
       if (res.ok) {
         toast.success("Signup successful!");
         setForm({ name: "", email: "", password: "" });
-        router.push("/");
-        window.location.reload();
+        window.location.href = "/";
       } else {
         toast.error(data.error || "Invalid OTP");
       }
