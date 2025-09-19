@@ -65,10 +65,6 @@ export default function AddSchoolPage() {
               rules={{
                 required: "Name is required",
                 minLength: { value: 3, message: "Name must be at least 3 characters" },
-                pattern: {
-                  value: /^[A-Za-z\s]+$/,
-                  message: "Name can only contain letters and spaces",
-                },
               }}
               render={({ field }) => (
                 <input
